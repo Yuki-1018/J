@@ -1,0 +1,43 @@
+name: Build iOS Binary
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    # レポジトリをチェックアウト
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # 必要なツールのインストール
+    - name: Install dependencies
+      run: |
+        brew update
+        brew install libimobiledevice autoconf automake
+
+    # iOS向けにmain.cをコンパイル
+    - name: Build for iOS arm64
+      run: |
+        mkdir -p build/iphoneos
+        clang main.c \
+          -o build/iphoneos/main \
+          -arch arm64 \
+          -isysroot $(xcrun --sdk iphoneos --show-sdk-path) \
+          -fembed-bitcode \
+          -mios-version-min=10.0 \
+          -I/usr/local/include/libimobiledevice \
+          -L/usr/local/lib \
+          -limobiledevice
+
+    # コンパイル結果をアーティファクトとしてアップロード
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: iOS-binary
+        path: build/iphoneos/main

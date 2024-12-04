@@ -35,6 +35,7 @@ jobs:
           -isysroot $(xcrun --sdk iphoneos --show-sdk-path) \
           -fembed-bitcode \
           -mios-version-min=10.0 \
+          -I$GITHUB_WORKSPACE/common \
           -I$HOMEBREW_PREFIX/include \
           -I$HOMEBREW_PREFIX/include/libimobiledevice-glue \
           -L$HOMEBREW_PREFIX/lib \

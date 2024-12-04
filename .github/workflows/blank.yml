@@ -19,7 +19,7 @@ jobs:
     - name: Install dependencies
       run: |
         brew update
-        brew install libimobiledevice autoconf automake
+        brew install libimobiledevice autoconf automake libimobiledevice-glue
 
     # iOS向けにmain.cをコンパイル
     - name: Build for iOS arm64

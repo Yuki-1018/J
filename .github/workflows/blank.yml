@@ -11,17 +11,19 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    # レポジトリをチェックアウト
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # 必要なツールのインストール
     - name: Install dependencies
       run: |
         brew update
-        brew install libimobiledevice autoconf automake libimobiledevice-glue
+        brew install libimobiledevice libimobiledevice-glue
 
-    # iOS向けにmain.cをコンパイル
+    - name: Verify installed libraries
+      run: |
+        ls /usr/local/include
+        ls /usr/local/lib
+
     - name: Build for iOS arm64
       run: |
         mkdir -p build/iphoneos
@@ -31,11 +33,11 @@ jobs:
           -isysroot $(xcrun --sdk iphoneos --show-sdk-path) \
           -fembed-bitcode \
           -mios-version-min=10.0 \
-          -I/usr/local/include/libimobiledevice \
+          -I/usr/local/include \
+          -I/usr/local/include/libimobiledevice-glue \
           -L/usr/local/lib \
           -limobiledevice
 
-    # コンパイル結果をアーティファクトとしてアップロード
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
